@@ -19,6 +19,14 @@ def soma_divisores_proprios(n):
     return s
 
 
+def conta_faixa(inicio, fim):
+    total = 0
+    for n in range(inicio, fim):
+        if soma_divisores_proprios(n) > n:
+            total += 1
+    return total
+
+
 def conta_abundantes(inicio, passo, limite):
     total = 0
     n = inicio

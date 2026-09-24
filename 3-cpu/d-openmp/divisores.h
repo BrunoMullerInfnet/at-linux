@@ -3,5 +3,6 @@
 
 long long soma_divisores_proprios(long long n);
 long long conta_abundantes(long long inicio, long long passo, long long limite);
+long long conta_faixa(long long inicio, long long fim);
 
 #endif

@@ -56,10 +56,12 @@ def rodar(cmd, reps):
             sys.stderr.write(proc.stdout)
             sys.stderr.write(proc.stderr)
             raise SystemExit(f"falhou: {' '.join(map(str, cmd))}")
-        valor = tempo = None
+        valor = tempo = nthreads = None
         for linha in proc.stdout.splitlines():
             if linha.startswith("Numeros abundantes encontrados:"):
                 valor = int(re.search(r"\d+", linha).group())
+            elif linha.startswith("Num. threads:"):
+                nthreads = int(re.search(r"\d+", linha).group())
             elif linha.startswith("Tempo"):
                 tempo = float(re.search(r"\d+\.\d+", linha).group())
         if valor is None or tempo is None:
@@ -69,7 +71,7 @@ def rodar(cmd, reps):
         elif valor != resultado:
             raise SystemExit(f"resultado diferente: {valor} != {resultado}")
         tempos.append(tempo)
-    return resultado, mediana(tempos)
+    return resultado, mediana(tempos), nthreads
 
 
 def num(valor, casas):
@@ -77,7 +79,7 @@ def num(valor, casas):
 
 
 def main():
-    esperado, _ = rodar([py, str(seq), "100"], 1)
+    esperado, _, _ = rodar([py, str(seq), "100"], 1)
     if esperado != 22:
         raise SystemExit(f"conferencia ate 100 deu {esperado}, esperava 22")
 
@@ -102,25 +104,29 @@ def main():
     # aquece o turbo antes de cronometrar
     subprocess.run([str(openmp), "100000", "4"], cwd=pasta, env=env, capture_output=True)
 
-    referencia, t_seq = rodar([py, str(seq), str(limite)], 1)
+    referencia, t_seq, _ = rodar([py, str(seq), str(limite)], 1)
     guarda("sequencial", 1, referencia, t_seq, t_seq)
 
     # GIL por ultimo: ele esquenta a maquina e atrapalha as outras medicoes
     grupos = [
-        ("OpenMP", [str(openmp)], 5),
-        ("threads sem GIL", [py, str(threads_sem)], 5),
-        ("multiprocessing", [py, str(processos)], 1),
-        ("threads com GIL", [py, str(threads_gil)], 1),
+        ("OpenMP", [str(openmp)], 5, True),
+        ("threads sem GIL", [py, str(threads_sem)], 1, False),
+        ("multiprocessing", [py, str(processos)], 1, True),
+        ("threads com GIL", [py, str(threads_gil)], 1, False),
     ]
 
-    for nome, prefixo, reps in grupos:
+    for nome, prefixo, reps, varia_p in grupos:
         if nome == "threads com GIL":
             print("pausa para o processador esfriar", flush=True)
             time.sleep(20)
         base = None
-        for p in trabalhadores:
-            resultado, tempo = rodar(prefixo + [str(limite), str(p)], reps)
-            if p == 1:
+        lista_p = trabalhadores if varia_p else [None]
+        for p in lista_p:
+            cmd = prefixo + [str(limite), str(p)] if varia_p else prefixo
+            resultado, tempo, p_lido = rodar(cmd, reps)
+            if p is None:
+                p = p_lido
+            if base is None:
                 base = tempo
             guarda(nome, p, resultado, tempo, base)
 

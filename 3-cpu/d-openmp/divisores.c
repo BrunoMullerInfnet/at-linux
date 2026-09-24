@@ -25,6 +25,17 @@ long long soma_divisores_proprios(long long n) {
     return s;
 }
 
+API long long conta_faixa(long long inicio, long long fim) {
+    long long n, total = 0;
+
+    for (n = inicio; n < fim; n++) {
+        if (soma_divisores_proprios(n) > n) {
+            total++;
+        }
+    }
+    return total;
+}
+
 API long long conta_abundantes(long long inicio, long long passo, long long limite) {
     long long n, total = 0;
 
