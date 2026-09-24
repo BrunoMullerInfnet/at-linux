@@ -1,0 +1,4 @@
+versao;bytes;tempo_s
+sequencial;3410820;13,6193
+asyncio;3410820;0,7015
+ganho_seq_sobre_asyncio;;19,42

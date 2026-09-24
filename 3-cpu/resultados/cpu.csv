@@ -1,0 +1,22 @@
+implementacao;trabalhadores;tempo_s;speedup;eficiencia;resultado
+sequencial;1;17,2940;1,000;1,000;123779
+OpenMP;1;2,0610;1,000;1,000;123779
+OpenMP;2;0,8390;2,456;1,228;123779
+OpenMP;4;0,4780;4,312;1,078;123779
+OpenMP;8;0,2810;7,335;0,917;123779
+OpenMP;12;0,2550;8,082;0,674;123779
+threads sem GIL;1;2,1674;1,000;1,000;123779
+threads sem GIL;2;0,8630;2,511;1,256;123779
+threads sem GIL;4;0,5171;4,192;1,048;123779
+threads sem GIL;8;0,3352;6,466;0,808;123779
+threads sem GIL;12;0,2748;7,888;0,657;123779
+multiprocessing;1;22,7008;1,000;1,000;123779
+multiprocessing;2;10,4514;2,172;1,086;123779
+multiprocessing;4;7,8206;2,903;0,726;123779
+multiprocessing;8;5,2298;4,341;0,543;123779
+multiprocessing;12;6,2415;3,637;0,303;123779
+threads com GIL;1;18,4765;1,000;1,000;123779
+threads com GIL;2;21,3100;0,867;0,434;123779
+threads com GIL;4;21,5017;0,859;0,215;123779
+threads com GIL;8;19,9959;0,924;0,116;123779
+threads com GIL;12;20,2427;0,913;0,076;123779
